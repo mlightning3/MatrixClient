@@ -11,37 +11,50 @@
 
 /* Matrix user functions */
 
-bool MatrixClient::login() 
+//Private helper function
+const char* MatrixClient::login_gettype()
 {
     const char* type; //Holds the returned login type
 
     // Ask server for login method
-    if(1)
-    {
-	// Set up json buffer
-	const size_t bufferSize = JSON_ARRAY_SIZE(1) + 2*JSON_OBJECT_SIZE(1);
-	StaticJsonBuffer<bufferSize> jsonBuffer;
+    // Set up json buffer
+    const size_t bufferSize = JSON_ARRAY_SIZE(1) + 2*JSON_OBJECT_SIZE(1);
+    StaticJsonBuffer<bufferSize> jsonBuffer;
 
-	//Get response from server
-	String url = "http://" + serverURL + "/_matrix/client/r0/login";
-	http.begin(url);
-	int response = http.GET();
-	if(response == HTTP_CODE_OK) 
-	{
-	    String json = http.getString();
-    
-	    //Parse the object
-	    JsonObject& root = jsonBuffer.parseObject(json);
-	    type = root["flows"][0]["type"];
-	}
-	else 
-	{ //Probably check for connectivity errors
-	}
+    //Get response from server
+    String url = "http://" + serverURL + "/_matrix/client/r0/login";
+    http.begin(url);
+    int response = http.GET();
+    if(response == HTTP_CODE_OK) 
+    {
+	String json = http.getString();
+   
+	//Parse the object
+	JsonObject& root = jsonBuffer.parseObject(json);
+	type = root["flows"][0]["type"];
+    }
+    else 
+    { //Probably check for connectivity errors
+	type = "error"; // For now just report an error	
+    }
+
+    return type;
+}
+
+// Logs in with the user data submitted when MatrixClient is created
+bool MatrixClient::login() 
+{
+    const char* type = login_gettype();
+
+    //Do error checking
+    if(strcmp(type, "error"))
+    {
+	return false; // Problem with getting type from GET login
     }
 
     String json; //Holds the returned json from the POST login
 
-    if(strcmp(type, "m.login.password") == 0)
+    if(strcmp(type, ".login.password") == 0)
     {
 	const size_t bufferSize = JSON_OBJECT_SIZE(3);
 	StaticJsonBuffer<bufferSize> jsonBuffer;
@@ -64,11 +77,16 @@ bool MatrixClient::login()
 	{
 	    json = http.getString();
 	}
+	else if(response == 429)
+	{
+	    //Wait and retry
+	}
+	else 
+	{
+	    return false; // Something is maybe wrong with login info, or login type is wrong
+	}
     }
     //Add in any other login methods
-
-    //Do error checking
-    //return false;
 
     //Save the access_token from successful login
     const size_t bufferSize = JSON_OBJECT_SIZE(3);

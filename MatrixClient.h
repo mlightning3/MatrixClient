@@ -27,6 +27,7 @@ class MatrixClient
 	
 	// Refresh access token
 	void token_refresh();
+	const char* login_gettype();
 
     public:
 	// Constructors/destructors
