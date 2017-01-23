@@ -11,7 +11,7 @@
 
 /* Matrix user functions */
 
-void MatrixClient::login() 
+bool MatrixClient::login() 
 {
     const char* type; //Holds the returned login type
 
@@ -68,6 +68,7 @@ void MatrixClient::login()
     //Add in any other login methods
 
     //Do error checking
+    //return false;
 
     //Save the access_token from successful login
     const size_t bufferSize = JSON_OBJECT_SIZE(3);
@@ -75,11 +76,21 @@ void MatrixClient::login()
 
     JsonObject& root = jsonBuffer.parseObject(json);
     access_token = String(root["access_token"]);
+
+    return true;
 }
 
-void MatrixClient::logout()
+bool MatrixClient::logout()
 {
-    //wifi.httppost("server url +/_matrix/client/r0/logout?access_token=+access_token")
+    String url = "http://" + serverURL + "/_matrix/client/r0/logout?access_token=" + access_token;
+    http.begin(url);
+    int response = http.POST();
+    if(response == HTTP_CODE_OK) 
+    {
+	access_token = ""; // Just so we don't try to reuse the same, now invalid, token
+	return true;
+    }
+    return false;
 }
 
 // Should only be called if an access token really needs to be changed

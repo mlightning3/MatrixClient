@@ -38,8 +38,8 @@ class MatrixClient
 	void end();
 
 	// Matrix user functions
-	void login();
-	void logout();
+	bool login();
+	bool logout();
 	void updateStatus();
 
 	// Matrix room functions
