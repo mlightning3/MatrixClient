@@ -24,14 +24,22 @@ void MatrixClient::login()
 
 	//Get response from server
 	String url = "http://" + serverURL + "/_matrix/client/r0/login";
-	char json[] = //wifi.httpget("server url +/_matrix/client/r0/login");
+	http.begin(url);
+	int response = http.GET();
+	if(response == HTTP_CODE_OK) 
+	{
+	    String json = http.getString();
     
-	//Parse the object
-	JsonObject& root = jsonBuffer.parseObject(json);
-	type = root["flows"][0]["type"];
+	    //Parse the object
+	    JsonObject& root = jsonBuffer.parseObject(json);
+	    type = root["flows"][0]["type"];
+	}
+	else 
+	{ //Probably check for connectivity errors
+	}
     }
 
-    char json[]; //Holds the returned json from the login
+    String json; //Holds the returned json from the POST login
 
     if(strcmp(type, "m.login.password") == 0)
     {
@@ -49,7 +57,13 @@ void MatrixClient::login()
 	object.printTo(buffer, sizeof(buffer));
 
 	String url = "http://" + serverURL + "/_matrix/client/r0/login";
-	json[] = //wifi.httppost(above json, "server url +/_matrix/client/r0/login")
+	http.begin(url);
+	http.addHeader("Content-Type", "application/json");
+	int response = http.POST(buffer);
+	if(response == HTTP_CODE_OK) 
+	{
+	    json = http.getString();
+	}
     }
     //Add in any other login methods
 
