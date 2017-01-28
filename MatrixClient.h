@@ -3,7 +3,7 @@
  *
  * Matt Kohls 2017
  *
- * Code covered by LGPL v3 or higher
+ * Code covered by GPL v3 or higher
  *
  */
 
