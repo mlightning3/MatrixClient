@@ -24,6 +24,9 @@ class MatrixClient
 	const char* user_name; // in form "user_name"
 	String serverURL; // in form "sub.example.com"
 	const char* password;
+
+	// Room variables
+	String current_roomID;
 	
 	// Refresh access token
 	void token_refresh();
@@ -44,7 +47,7 @@ class MatrixClient
 	void updateStatus();
 
 	// Matrix room functions
-	void createRoom(const String& roomname);
+	bool createRoom(const String& roomname);
 	
 	
 	// Matrix event functions

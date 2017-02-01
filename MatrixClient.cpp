@@ -63,7 +63,7 @@ bool MatrixClient::login()
 	//Json {type:m.login.password user:username password:password}
 	JsonObject& object = jsonBuffer.createObject();
 
-	object["m.login.password"] = type;
+	object["type"] = type;
 	object["user"] = user_name;
 	object["password"] = password;
 
@@ -134,12 +134,33 @@ void updateStatus()
 
 /* Matrix room functions */
 
-void createRoom(const String& roomname)
+bool createRoom(const String& roomname)
 {
-    //Json with room_alias_name:aname
-    //wifi.httppost(above json, "server url+/_matrix/client/r0/createRoom?access_token=+access_token")
-    
-    //error checking
+    //Just use this simple json for now, might add support for more information later
+    String createMessage = "{\"room_alias_name\":\"" + roomname + "\"}";
+    String url = "http://" + serverURL + "/_matrix/client/r0/createRoom?access_token=" + access_token;
+
+    http.begin(url);
+    http.addHeader("Content-Type", "application/json");
+    int response = http.POST(createMessage.c_str());
+
+    String json;
+    if(response == HTTP_CODE_OK)
+    {
+	json = http.getString();
+    }
+    else // A 400 code means either bad json sent, or room alias already in use
+    {
+	return false; //Something went wrong
+    }
+
+    const size_t bufferSize = JSON_OBJECT_SIZE(1);
+    StaticJsonBuffer<bufferSize> jsonBuffer;
+
+    JsonObject& root = jsonBuffer.parseObject(json);
+    current_roomID = String(root["room_id"]); // Save the new room as current room
+
+    return true; // New room created
 }
 
 /* Matrix event functions */
