@@ -48,6 +48,7 @@ class MatrixClient
 
 	// Matrix room functions
 	bool createRoom(const String& roomname);
+	const char* getCurrentRoom();
 	
 	
 	// Matrix event functions

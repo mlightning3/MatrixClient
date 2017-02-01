@@ -134,6 +134,7 @@ void updateStatus()
 
 /* Matrix room functions */
 
+//Creates a room on the server with the alias given
 bool createRoom(const String& roomname)
 {
     //Just use this simple json for now, might add support for more information later
@@ -161,6 +162,12 @@ bool createRoom(const String& roomname)
     current_roomID = String(root["room_id"]); // Save the new room as current room
 
     return true; // New room created
+}
+
+//Returns the roomID of the last created/joined room
+const char* getCurrentRoom()
+{
+    return current_roomID.c_str();
 }
 
 /* Matrix event functions */
