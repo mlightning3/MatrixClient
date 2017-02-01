@@ -143,7 +143,7 @@ bool createRoom(const String& roomname)
 
     http.begin(url);
     http.addHeader("Content-Type", "application/json");
-    int response = http.POST(createMessage.c_str());
+    int response = http.POST(createMessage);
 
     String json;
     if(response == HTTP_CODE_OK)

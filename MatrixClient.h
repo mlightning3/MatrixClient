@@ -12,7 +12,9 @@
 
 #include "Arduino.h"
 #include "ArduinoJson.h" // github.com/bblanchon/ArduinoJson
-// #include wifi
+//ESP8266 wifi, will need to look into how to make work for arduino as well
+#include "ESP8266WiFi.h"
+#include "ESP8266HTTPClient.h"
 
 class MatrixClient
 {
