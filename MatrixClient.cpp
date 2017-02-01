@@ -54,7 +54,8 @@ bool MatrixClient::login()
 
     String json; //Holds the returned json from the POST login
 
-    if(strcmp(type, ".login.password") == 0)
+    //This will probably be broken out into a generic function at some point, right now only supports m.login.password
+    if(strcmp(type, "m.login.password") == 0)
     {
 	const size_t bufferSize = JSON_OBJECT_SIZE(3);
 	StaticJsonBuffer<bufferSize> jsonBuffer;
